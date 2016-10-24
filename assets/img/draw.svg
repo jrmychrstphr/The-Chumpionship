@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1px"
+	 height="20px" viewBox="0 0 1 20" enable-background="new 0 0 1 20" xml:space="preserve">
+<symbol  id="Loss" viewBox="-2.5 -10 5 20">
+	<polygon fill="none" points="2.5,-10 -2.5,-10 -2.5,10 2.5,10 	"/>
+	<polygon fill="#00B4E1" points="2.5,-10 -2.5,-10 -2.5,3 2.5,3 	"/>
+</symbol>
+<symbol  id="Null" viewBox="-2.5 -10 5 20">
+	<polygon fill="none" points="2.5,-10 -2.5,-10 -2.5,10 2.5,10 	"/>
+	<polygon fill="#AAAFB4" points="2.5,-0.5 -2.5,-0.5 -2.5,0.5 2.5,0.5 	"/>
+</symbol>
+<symbol  id="Win" viewBox="-2.5 -10 5 20">
+	<polygon fill="none" points="2.5,-10 -2.5,-10 -2.5,10 2.5,10 	"/>
+	<polygon fill="#83BE40" points="2.5,-3 -2.5,-3 -2.5,10 2.5,10 	"/>
+</symbol>
+<g id="Scan">
+</g>
+<g id="Main">
+	<rect fill="none" width="1" height="20"/>
+	<rect y="6" fill="#AAAFB4" width="1" height="8"/>
+</g>
+</svg>

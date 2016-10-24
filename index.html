@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>The Chumpionship</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="reset.css" />
+
+    <style type="text/css">
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: rgb(240, 240, 240);
+        }
+        
+        #page-contents {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+        }
+        
+        #page-header {
+            background-image: -webkit-linear-gradient(left, rgb(0, 180, 255), rgb(90, 170, 0), rgb(35, 130, 0));
+            transition: height 1s ease-in-out;
+        }
+        
+        #page-header:not(.loading) {
+            height: 100px;
+        }
+        
+        #page-header.loading {
+            height: 100vh;
+        }
+        
+        #page-header div.logo {
+            background-image: url(assets/img/logo-white.svg);
+            background-size: 100%;
+            background-repeat: no-repeat;
+            background-position: center center;
+            width: calc(100% - 100px);
+            max-width: 700px;
+            height: 100%;
+            margin: auto;
+        }
+        
+        #leaguetable {
+            padding: 20px;
+            background-color: white;
+        }
+        
+        #leaguetable table {
+            width: 100%;
+            background-image: -webkit-linear-gradient(left, rgb(0, 180, 255), rgb(90, 170, 0), rgb(35, 130, 0));
+        }
+        
+        #leaguetable table:not(:last-child) {
+            margin-bottom: 20px;
+        }
+        
+        #leaguetable table tbody tr td.positionchange div {
+            width: 20px;
+            height: 20px;
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        #leaguetable table tbody td.teamform div {
+            width: 5px;
+            height: 20px;
+            float: left;
+            margin-right: 2px;
+        }
+        
+        #leaguetable table tbody {
+            color: rgb(29, 29, 27);
+        }
+        
+        #leaguetable table thead tr th {
+            padding: 8px 5px;
+            font-size: 13px;
+            color: rgb(255, 255, 255);
+        }
+        
+        #leaguetable table tbody {}
+        
+        #leaguetable table tbody tr {
+            background-color: white;
+            border-bottom: 1px solid rgb(240, 240, 240);
+        }
+        
+        #leaguetable table tbody tr:hover {
+            //background-color: rgb(240,240,240);
+        }
+        
+        #leaguetable table tbody tr:nth-child(1),
+        #leaguetable table tbody tr:nth-child(4),
+        #leaguetable table tbody tr:nth-child(18),
+        #leaguetable table tbody tr:nth-child(20) {
+            border-bottom-color: rgb(29, 29, 27);
+        }
+        
+        #leaguetable table colgroup col.teamform {
+            width: 300px;
+        }
+        
+        #leaguetable table colgroup col.crest {
+            width: 40px;
+        }
+        
+        #leaguetable table tbody tr td.crest div {
+            width: 40px;
+            height: 40px;
+            background-size: contain;
+        }
+        
+        #leaguetable table tbody tr td {
+            padding: 8px 5px;
+            font-size: 15px;
+        }
+        
+        #table-footer {
+            font-size: 13px;
+        }
+        /* NON-MOBILE STYLES */
+        
+        @media only screen and (min-width: 450px) {
+            #leaguetable {
+                padding: 50px;
+            }
+            #page-header:not(.loading) {
+                height: 190px;
+            }
+        }
+        /* SWITCH OFF COLUMNS AT BREAK POINTS */
+        
+        @media only screen and (max-width: 974px) {
+            #leaguetable table .playername {
+                display: none;
+            }
+        }
+        
+        @media only screen and (max-width: 774px) {
+            #leaguetable table .playerscore {
+                display: none;
+            }
+        }
+        
+        @media only screen and (max-width: 734px) {
+            #leaguetable table .teamform {
+                display: none;
+            }
+        }
+        
+        @media only screen and (max-width: 449px) {
+            #leaguetable table .crest {
+                display: none;
+            }
+        }
+    </style>
+
+    <script src="http://d3js.org/d3.v2.js"></script>
+    <script src="tabletop.js"></script>
+    <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
+    <script src="jquery.tablesorter.min.js"></script>
+
+</head>
+
+<body>
+
+    <div id="page">
+
+        <div id="page-contents">
+
+            <section id="page-header" class="loading">
+                <div class="logo"></div>
+            </section>
+
+        </div>
+
+    </div>
+
+</body>
+
+<script type="text/javascript">
+    var dataset;
+
+    $(document).ready(function() {
+        init()
+    });
+
+    function init() {
+
+        Tabletop.init({
+
+            key: '1bg0RGP-dTi3ov_WH5nAnKz-seX9RYs9915XPYKjKOak',
+            callback: showInfo,
+            simpleSheet: false,
+            debug: false
+
+        })
+    }
+
+    function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == variable) {
+                return pair[1];
+            }
+        }
+        return (false);
+    }
+
+    function showInfo(data, tabletop) {
+
+        //add table to the DOM
+        var table = d3.select("#page-contents").append("section").attr("id", "leaguetable").append("table");
+
+        var tableColGroup = table.append("colgroup");
+        var tableHead = table.append("thead").append("tr");
+        var tableBody = table.append("tbody");
+
+        var status = tabletop.sheets("Status").all();
+
+        function defineCurrentGameweek() {
+
+            var a, b, x;
+
+            //define URL gw
+            a = getQueryVariable("gw")
+
+            //define spreadsheet gw
+            for (var i = 0; i < status.length; i++) {
+
+                if (status[i].updated === "Yes") {
+                    b = parseInt(status[i].gameweek);
+                } else {
+                    break;
+                }
+            }
+
+            //compare url and spreadsheet gw settings and define gw accordingly			
+            if (a === false) {
+                x = b;
+            } else {
+                a = parseInt(a);
+
+                x = Math.min(a, b);
+            }
+
+            return parseInt(x);
+        }
+
+        var currentGW = defineCurrentGameweek();
+
+        //console.log("The current gameweek is GW"+currentGW);
+
+        var players;
+
+        players = tabletop.sheets("Players").all();
+
+        $.each(players, function(i, cat) {
+
+            var playername, teamname, playerscore, playerpoints, currentleaguepositon, lastleaguepositon;
+
+            playername = cat.playername;
+            teamname = cat.teamname;
+
+            var playerdata;
+            playerdata = tabletop.sheets(cat.playername).all()
+
+            for (var i = 0; i < playerdata.length; i++) {
+
+                if (parseInt(playerdata[i].gameweek) === currentGW) {
+
+                    playerpoints = playerdata[i].totalleaguepoints;
+                    playerscore = playerdata[i].totalscore;
+
+                    currentleaguepositon = parseInt(playerdata[i].leagueposition);
+
+                    if (currentGW > 1) {
+                        lastleaguepositon = parseInt(playerdata[i - 1].leagueposition);
+                    } else {
+                        lastleaguepositon = false;
+                    }
+
+                }
+
+            }
+
+            var tableRow = tableBody.append("tr")
+            .attr("data-playerscore", playerscore)
+            .attr("data-playerpoints", playerpoints)
+            .attr("data-playername", function() {
+                return playername.replace(" ", "-");
+            });
+
+            tableRow.append("td").classed("positionchange", true).attr("data-colhead", "+/-").append("div").style("background-image", function() {
+
+                var a;
+                //console.log(lastleaguepositon+" / "+currentleaguepositon);
+
+                if (lastleaguepositon != false && lastleaguepositon > currentleaguepositon) {
+                    a = "arrow-up";
+                } else if (lastleaguepositon != false && lastleaguepositon < currentleaguepositon) {
+                    a = "arrow-down";
+                } else {
+                    a = "no-change";
+                }
+
+                return "url('assets/img/" + a + ".svg')";
+
+            });
+            tableRow.append("td").classed("position", true).attr("data-colhead", "#");
+            tableRow.append("td").classed("crest", true).append("div").style("background-image", function() {
+                var a = playername.replace(" ", "-");
+                return "url('assets/img/crests/" + a + ".png')"
+            }).attr("data-colhead", "");
+            tableRow.append("td").html(teamname).classed("teamname", true).attr("data-colhead", "Team");
+            tableRow.append("td").html(playername).classed("playername", true).attr("data-colhead", "Manager");
+            var form = tableRow.append("td").classed("teamform", true).attr("data-colhead", "Form");
+            tableRow.append("td").html(playerscore).classed("playerscore", true).attr("data-colhead", "Score");
+            tableRow.append("td").html(playerpoints).classed("playerpoints", true).attr("data-colhead", "Pts");
+
+            //create form section based on results
+            for (var i = 0; i < playerdata.length; i++) {
+
+                form.append("div").style("background-image", function() {
+
+                        var a;
+
+                        if (playerdata[i].gameweek <= currentGW && playerdata[i].gwresult === "Win") {
+                            a = "win"
+                        } else if (playerdata[i].gameweek <= currentGW && playerdata[i].gwresult === "Loss") {
+                            a = "loss"
+                        } else if (playerdata[i].gameweek <= currentGW && playerdata[i].gwresult === "Draw") {
+                            a = "draw"
+                        } else {
+                            a = "null"
+                        };
+
+                        return "url('assets/img/" + a + ".svg')";
+
+                    })
+                    .attr("data-gw", playerdata[i].gameweek)
+                    .attr("data-gwopponent", playerdata[i].gwopponent)
+                    .attr("data-gwresult", playerdata[i].gwresult);
+
+            }
+
+        });
+
+        //add col elements for added columns
+        $("#leaguetable table tbody tr:nth-child(1) td").each(function() {
+
+            var a = $(this).attr("class"),
+                b = d3.select("#leaguetable table colgroup"),
+                c = d3.select("#leaguetable table thead tr"),
+                d = $(this).attr("data-colhead");
+
+            b.append("col").attr("class", a);
+            c.append("th").attr("class", a).html(d);
+
+        })
+
+        var sorta = $("#leaguetable table thead tr th.playerpoints").index(),
+            sortb = $("#leaguetable table thead tr th.playerscore").index(),
+            sortc = $("#leaguetable table thead tr th.teamname").index();
+
+        //sort the table
+        $("#leaguetable table").tablesorter({
+
+            // sort on the first column and third column, order asc 
+            sortList: [
+                [sorta, 1],
+                [sortb, 1],
+                [sortc, 0]
+            ],
+            debug: false
+        });
+
+        //remove ability to re-sort the table contents
+        $("#leaguetable table thead tr th").off("click mousedown");
+
+        //After sorting, add numbers
+        $("#leaguetable table tbody tr").each(function() {
+            var a = $(this),
+                b = a.index(),
+                c = a.parent().find("tr:nth-child("+b+")"),
+                d = b + 1;
+            
+            
+            var w, x, y, z;
+            
+            w = a.attr("data-playerpoints");
+            x = c.attr("data-playerpoints");
+            
+            y = a.attr("data-playerscore");
+            z = c.attr("data-playerscore");
+            
+            a.find("td.position").html(function() {
+                
+                if ( d > 0 && w === x && y === z) {
+                    return "="
+                } else {
+                    return d
+                }
+            
+            });
+            
+            
+        });
+
+        d3.select("#leaguetable").append("div").attr("id", "table-footer").html("Table data correct up to gameweek " + currentGW);
+
+        d3.select("#page-header").classed("loading", false);
+
+    }
+</script>
+
+</html>
